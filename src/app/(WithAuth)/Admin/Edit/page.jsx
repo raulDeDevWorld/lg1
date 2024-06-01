@@ -21,7 +21,7 @@ import Subtitle from '@/components/Subtitle'
 
 
 
-const Button = ({ url, children,src }) => {
+const Button = ({ url, children, src }) => {
   return <button className='bg-[#ffbd2f] w-[200px] flex flex-col justify-center items-center  p-2 rounded-[5px]  m-3'>
     <img src={src} className='w-[100px]' alt="" />
     <a href={`/Admin/Edit/Section?item=${url}`} className='font-medium'> {children}</a>
@@ -45,7 +45,7 @@ export default function Home() {
   console.log(user)
   return (
 
-    <div className="min-h-full"
+    <div className="relative min-h-full"
       style={{
         backgroundImage: 'url(/gif.gif)',
         backgroundRepeat: 'no-repeat',
@@ -64,19 +64,25 @@ export default function Home() {
     </video>  */}
       {/* <img src="/truck.png" className='absolute  w-screen h-screen bg-[#01A7EB] object-cover lg:hidden' alt="" /> */}
 
-      <img src="/airplane-bg.jpg" className='absolute  w-screen h-screen bg-[#01A7EB] object-cover ' alt="" />
+      <img src="/airplane-bg.jpg" className='fixed  w-screen h-screen bg-[#01A7EB] object-cover ' alt="" />
 
-      <div className='relative  min-h-screen z-10 flex flex-col justify-center items-center'>
+      <div className='relative  py-[100px]  lg:pb-[100px] h-screen flex flex-col justify-center z-10 '>
+        <div className='hidden lg:flex justify-center'>
+          <img src="/logo.svg" className='w-[20vw]' alt="User" />
+        </div>
 
-        <Button url='terrestre' src="/icons/TERRESTRE.png" > Transporte Terrestre  </Button>
-        <Button url='maritimo' src="/icons/MARITIMO.png" > Transporte Maritimo  </Button>
-        <Button url='aereo' src="/icons/AEREO.png" > Transporte Aereo  </Button>
-        <Button url='proyecto' src="/icons/DESPACHO ADUANERO.png" > Carga Proyecto  </Button>
-        <Button url='contactos' src="/icons/CARGA REFRIGERADA.png" > Contactos  </Button>
+        <div className='relative   z-10 flex flex-col justify-center items-center lg:flex-row'>
 
-     
+          <Button url='terrestre' src="/icons/TERRESTRE.png" > Transporte Terrestre  </Button>
+          <Button url='maritimo' src="/icons/MARITIMO.png" > Transporte Maritimo  </Button>
+          <Button url='aereo' src="/icons/AEREO.png" > Transporte Aereo  </Button>
+          <Button url='proyecto' src="/icons/DESPACHO ADUANERO.png" > Carga Proyecto  </Button>
+          <Button url='contactos' src="/icons/CARGA REFRIGERADA.png" > Contactos  </Button>
+
+
+        </div>
+
       </div>
-
 
 
 
