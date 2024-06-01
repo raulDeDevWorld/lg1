@@ -24,7 +24,7 @@ import Subtitle from '@/components/Subtitle'
 const Button = ({ url, children, src }) => {
   return <button className='bg-[#ffbd2f] w-[200px] flex flex-col justify-center items-center  p-2 rounded-[5px]  m-3'>
     <img src={src} className='w-[100px]' alt="" />
-    <a href={`/Admin/Edit/Section?item=${url}`} className='font-medium'> {children}</a>
+    <Link href={`/Admin/Edit/Section?item=${url}`} className='font-medium'> {children}</Link>
   </button>
 }
 export default function Home() {
@@ -64,7 +64,7 @@ export default function Home() {
     </video>  */}
       {/* <img src="/truck.png" className='absolute  w-screen h-screen bg-[#01A7EB] object-cover lg:hidden' alt="" /> */}
 
-      <img src="/airplane-bg.jpg" className='fixed  w-screen h-screen bg-[#01A7EB] object-cover ' alt="" />
+      <img src="/airplane-bg.jpg" className='fixed  w-screen h-screen  object-cover ' alt="" />
 
       <div className='relative  py-[100px]  lg:pb-[100px] h-screen flex flex-col justify-center z-10 '>
         <div className='hidden lg:flex justify-center'>
