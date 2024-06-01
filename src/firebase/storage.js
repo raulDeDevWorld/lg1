@@ -7,7 +7,7 @@ import { writeUserData } from './utils'
 const storage = getStorage(app)
 
 //--------------------------- Firebase Storage ---------------------------
-async function uploadIMG(ruteDB, ruteSTG, fileName, file, db) {
+async function uploadIMG(ruteDB, ruteSTG, fileName, file, db, setUserSuccess) {
     const imagesRef = ref(storage, `/${ruteSTG}/${fileName}`);
 
 
@@ -22,7 +22,7 @@ async function uploadIMG(ruteDB, ruteSTG, fileName, file, db) {
                     url,
                 }
 
-                return writeUserData(ruteDB, obj)
+                return writeUserData(ruteDB, obj, setUserSuccess)
             })
             .catch((error) => {
             });

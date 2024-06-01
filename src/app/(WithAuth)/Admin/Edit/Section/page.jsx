@@ -3,19 +3,19 @@ import { useUser } from '@/context/Context'
 import { onAuth, signUpWithEmail, writeUserData } from '@/firebase/utils'
 import { uploadIMG } from '@/firebase/storage'
 import { Suspense } from 'react'
-   
+
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import style from '@/app/page.module.css'
 // import Button from '@/components/Button'
 import Error from '@/components/Error'
-import Video from '@/components/Video'
+import Loader from '@/components/Loader'
 import ScrollAnimation from 'react-animate-on-scroll';
 import "animate.css/animate.compat.css"
 import Input from '@/components/Input'
 import { useRouter } from 'next/navigation';
-import Subtitle from '@/components/Subtitle'
+import Modal from '@/components/Modal'
 import TextEditor from '@/components/TextEditor'
 // import { useSearchParams } from 'next/navigation'
 
@@ -33,13 +33,13 @@ export default function Home() {
             {children}
         </button></Suspense>
     }
-    const { user, introVideo, userDB, setUserProfile, setUserSuccess, success, setUserData, postsIMG, setUserPostsIMG, item, cliente, setCliente, cart, setCart } = useUser()
+    const { user, introVideo, userDB, setUserProfile, setUserSuccess, success, setUserData, postsIMG, setUserPostsIMG, item, cliente, setCliente, cart, setCart, modal, setModal } = useUser()
     const router = useRouter()
 
     const [counter, setCounter] = useState([''])
 
     //    console.log(window.location.href.split('=')[1]) 
-    const [textEditor, setTextEditor] = useState("")
+    const [textEditor, setTextEditor] = useState(undefined)
 
     // const searchParams = useSearchParams()
     const [query, setQuery] = useState('')
@@ -72,74 +72,25 @@ export default function Home() {
         })
     }
 
-    console.log(dataURL)
+
+
+
+
     function saveFrontPage(e) {
         e.preventDefault()
+        setUserSuccess('Cargando')
         if (e.target[0].files[0]) {
-            uploadIMG(`/Cliente/${query}`, '/', query, dataURL.file, { ...data, tarjetas: data2 })
+            uploadIMG(`/Cliente/${query}`, '/', query, dataURL.file, { ...data, tarjetas: data2 }, setUserSuccess)
         } else {
-            writeUserData(`/Cliente/${query}`, { ...data, tarjetas: data2 })
+            writeUserData(`/Cliente/${query}`, { ...data, tarjetas: data2 }, setUserSuccess)
         }
-
-  
     }
-    function addService(e) {
-        e.preventDefault()
-
-        const filename = generateUUID()
-        const obj = {
-            ['servicio remoto']: check,
-            [e.target[1].name]: e.target[1].value,
-            [e.target[2].name]: e.target[2].value,
-            [e.target[3].name]: e.target[3].value,
-            [e.target[4].name]: e.target[4].value,
-            [e.target[5].name]: e.target[5].value,
-            [e.target[6].name]: e.target[6].value,
-        }
-
-        console.log(obj)
-        e.target[0].files[0] && uploadIMG(`services/${item !== undefined ? item.uid : filename}`, 'services', filename, e.target[0].files[0], obj, setUserData, setUserSuccess, 'url')
-        e.target[0].files[0] === undefined && writeUserData(`services/${item !== undefined ? item.uid : filename}`, obj, setUserData, setUserSuccess)
-
-    }
-
-
-    function addArticle(e) {
-        e.preventDefault()
-
-        const filename = generateUUID()
-        const obj = {
-            [e.target[1].name]: e.target[1].value,
-            [e.target[2].name]: e.target[2].value,
-        }
-        e.target[0].files[0] && uploadIMG(`articleIMG/IMG2023`, 'articleIMG', 'IMG2023', e.target[0].files[0], {}, setUserData, setUserSuccess, 'url')
-        Object.keys(obj).length > 0 && writeUserData(`articles/${item !== undefined ? item : filename}`, obj, setUserData, setUserSuccess)
-    }
-    
-
-
-    function addTestimonies(e) {
-        e.preventDefault()
-
-        const filename = generateUUID()
-        const obj = {
-            [e.target[1].name]: e.target[1].value,
-            [e.target[2].name]: e.target[2].value,
-        }
-
-        console.log(obj)
-        e.target[0].files[0] && uploadIMG(`testimonies/${item !== undefined ? item.uid : filename}`, 'testimonies', filename, e.target[0].files[0], obj, setUserData, setUserSuccess, 'url')
-        e.target[0].files[0] === undefined && writeUserData(`testimonies/${item !== undefined ? item.uid : filename}`, obj, setUserData, setUserSuccess)
-
-    }
-
 
 
 
     function addContact(e) {
         e.preventDefault()
 
-        // const filename = generateUUID()
         const obj = {
             [e.target[0].name]: e.target[0].value,
             [e.target[1].name]: e.target[1].value,
@@ -160,7 +111,6 @@ export default function Home() {
         // setCheck(false)
         router.back()
     }
-    console.log(item)
 
 
 
@@ -183,7 +133,6 @@ export default function Home() {
 
     }, [cliente])
 
-    console.log(query)
 
 
 
@@ -221,13 +170,22 @@ export default function Home() {
 
 
 
-useEffect(()=>{
-
-},[])        
+    useEffect(() => {
 
 
+        if (textEditor == undefined && cliente && cliente[query] && cliente[query] && cliente[query].content) {
+            setTextEditor(cliente[query].content)
+        }
 
-    console.log(counter)
+        if (Object.keys(data2).length === 0 && cliente && cliente[query] && cliente[query] && cliente[query].tarjetas) {
+            setData2({ ...cliente[query].tarjetas, ...data2, })
+        }
+
+    }, [textEditor, data2])
+
+
+
+    console.log(data2 !== undefined && Object.keys(data2).length)
     return (
         <Suspense >
 
@@ -293,34 +251,24 @@ useEffect(()=>{
                         </div>
 
 
-                        <div className='w-full text-[white] grid grid-cols-2 gap-5 py-12'>
-                            {cliente && cliente !== undefined && cliente['terrestre'].tarjetas && cliente['terrestre'].tarjetas !== undefined && Object.values(cliente['terrestre'].tarjetas).map((i, index) => <Item e1={i[`ip${index}`]} e2={i[`ic${index}`]} />)}
-                            {/* <Item e1={i['ip0']} e2={i['ic0']} /> */}
-                        </div>
-
                         <div class="inline-flex">
-                            <button class="bg-red-500 text-white font-bold py-2 px-4 rounded-l">
+                            <button type='button' class="bg-red-500 text-white font-bold py-2 px-4 rounded-l" onClick={() =>{ let db = data2; delete db[`item${data2 !== undefined && Object.keys(data2).length -1}`]; console.log(db); return setData2(456456)}}>
                                 -
                             </button>
-                            <button class="bg-green-500 text-white font-bold py-2 px-4 rounded-r" onClick={() => setData2([...counter, ''])} >
+                            <button type='button' class="bg-green-500 text-white font-bold py-2 px-4 rounded-r" onClick={() => setData2({ ...data2, [`item${data2 !== undefined && Object.keys(data2).length}`]: { ic: '', ip: '' } })} >
                                 +
                             </button>
                         </div>
-                        {cliente && cliente !== undefined && cliente['terrestre'].tarjetas && cliente['terrestre'].tarjetas !== undefined && Object.values(cliente['terrestre'].tarjetas).map((i, index) => {
+                        {console.log(cliente)}
+                        {data2 && data2 !== undefined && Object.values(data2).map((i, index) => {
                             return <div className="sm:col-span-3 mb-5 pb-5 border-b-[.5px] border-[#666666]">
                                 <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">Item principal</label>
-                                <input type="text" name={`ip${index}`} onChange={(e) => onChangeHandler2(e, index)} className="block w-full rounded-md border-0 p-1.5 mt-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" defaultValue={data && data.contactos && data.contactos['departamento']} />
-
+                                <input type="text" name={`ip`} onChange={(e) => onChangeHandler2(e, index)} className="block w-full rounded-md border-0 p-1.5 mt-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" defaultValue={data2[`item${index}`][`ip`]} />
                                 <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">Item contenido</label>
-                                <input type="text" name={`ic${index}`} onChange={(e) => onChangeHandler2(e, index)} className="block w-full rounded-md border-0 p-1.5 mt-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" defaultValue={data && data.contactos && data.contactos['departamento']} />
+                                <input type="text" name={`ic`} onChange={(e) => onChangeHandler2(e, index)} className="block w-full rounded-md border-0 p-1.5 mt-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" defaultValue={data2[`item${index}`][`ic`]} />
                             </div>
                         })
                         }
-
-
-
-
-
 
                         <div className="mt-6 flex items-center justify-center gap-x-6">
                             <Button type="submit" theme="Primary">Guardar</Button>
@@ -391,13 +339,10 @@ useEffect(()=>{
 
 
 
-
-
-
-
-
-
+                {success === 'Cargando' && <Loader>ghfhfhj</Loader>}
             </div>
+
+
         </Suspense>
     )
 }
