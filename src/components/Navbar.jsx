@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react'
 import { useUser } from '@/context/Context'
@@ -13,6 +13,7 @@ export default function BottomNavigation({ rol }) {
     const { user, userDB, modal, setModal, setUserProfile, setUserData, setUserProduct, setRecetaDB, setUserCart, setUserDistributorPDB, filter, setFilter, nav, setNav, navItem, setNavItem } = useUser()
     const [show, setShow] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [scrollY, setScrollY] = useState(0)
     // const [filter, setFilter] = useState('')
     const router = useRouter()
     const pathname = usePathname()
@@ -31,11 +32,12 @@ export default function BottomNavigation({ rol }) {
         if (window.scrollY > lastScrollY) {
             setShow(false);
             setFilter('')
+            setScrollY(window.scrollY)
 
         } else {
             setFilter('')
             setShow(true);
-            // console.log(window.scrollY )
+            setScrollY(window.scrollY)
         }
         setLastScrollY(window.scrollY);
     };
@@ -56,7 +58,7 @@ export default function BottomNavigation({ rol }) {
         return () => window.removeEventListener('scroll', controlNavbar);
     }, [lastScrollY, show, filter]);
     return <>
-        <nav className={`fixed  w-screen   transition-all ${pathname == '/Glosario' ? 'bg-[#2A52BE]'  : ''} z-40  ${show ? 'top-0' : 'top-[-100px]'} transition-all  ${ typeof window !== "undefined" && window.scrollY > 500 ? 'bg-[#101c3fd5] lg:border-b lg:border-gray-200' : ''}`}>
+        <nav className={`fixed  w-screen   transition-all ${pathname == '/Glosario' ? 'bg-[#2A52BE]'  : ''} z-40  ${show ? 'top-0' : 'top-[-100px]'} transition-all  ${ scrollY > 500 ? 'bg-[#101c3fd5] lg:border-b lg:border-gray-200' : ''}`}>
 
             <div className="w-screen flex items-center justify-between mx-auto py-4 px-4 lg:px-8 ">
                 <Link href="/" className="flex items-center">
