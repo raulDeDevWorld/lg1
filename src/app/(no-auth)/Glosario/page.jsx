@@ -50,10 +50,10 @@ export default function BottomNavigation({ rol }) {
     console.log()
 
 
-    useEffect(() => {
-        window.addEventListener('scroll', controlNavbar);
-        return () => window.removeEventListener('scroll', controlNavbar);
-    }, [lastScrollY, show, filter]);
+    // useEffect(() => {
+    //     window.addEventListener('scroll', controlNavbar);
+    //     return () => window.removeEventListener('scroll', controlNavbar);
+    // }, [lastScrollY, show, filter]);
     return <div className='bg-[#fffffff8] w-screen p-5 mt-[80px] '>
         {
             Object.entries(glosario).map((i, index) => {
